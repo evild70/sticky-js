@@ -86,6 +86,8 @@ class Sticky {
 
     element.sticky.rect = this.getRectangle(element);
 
+    element.sticky.stickyBottom = 'js-is-sticky-bottom';
+
     // fix when element is image that has not yet loaded and width, height = 0
     if (element.tagName.toLowerCase() === 'img') {
       element.onload = () => element.sticky.rect = this.getRectangle(element);
@@ -188,7 +190,7 @@ class Sticky {
     ) {
       element.sticky.active = false;
     }
-
+    this.update();
     this.setPosition(element);
    }
 
@@ -245,6 +247,7 @@ class Sticky {
     if (element.sticky.wrap) {
       this.css(element.parentNode, {
         display: 'block',
+        width: '100%',
         // width: element.sticky.rect.width + 'px',
         // height: element.sticky.rect.height + 'px',
         paddingTop: element.sticky.rect.height + 'px'
@@ -260,11 +263,13 @@ class Sticky {
         top: element.sticky.rect.top + 'px',
         left: element.sticky.rect.left + 'px',
         width: element.sticky.rect.width + 'px',
+        // width: '100%',
       });
     } else if (this.scrollTop > (element.sticky.rect.top - element.sticky.marginTop)) {
       this.css(element, {
         position: 'fixed',
         width: element.sticky.rect.width + 'px',
+        // width: '100%',
         left: element.sticky.rect.left + 'px',
       });
 
@@ -272,9 +277,10 @@ class Sticky {
         (this.scrollTop + element.sticky.rect.height + element.sticky.marginTop)
         > (element.sticky.container.rect.top + element.sticky.container.offsetHeight)
       ) {
-
+        // bottom of parent
         if (element.sticky.stickyClass) {
           element.classList.remove(element.sticky.stickyClass);
+          element.classList.add(element.sticky.stickyBottom);
         }
 
         this.css(element, {
@@ -283,13 +289,16 @@ class Sticky {
       } else {
         if (element.sticky.stickyClass) {
           element.classList.add(element.sticky.stickyClass);
+          element.classList.remove(element.sticky.stickyBottom);
         }
 
         this.css(element, { top: element.sticky.marginTop + 'px' });
       }
     } else {
+      // not sticky yet
       if (element.sticky.stickyClass) {
         element.classList.remove(element.sticky.stickyClass);
+        element.classList.remove(element.sticky.stickyBottom);
       }
 
       this.css(element, { position: '', width: '', top: '', left: '' });
